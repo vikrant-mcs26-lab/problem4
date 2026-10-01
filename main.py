@@ -53,7 +53,7 @@ def execute_for_res_dir(res_dir: pth.Path) -> None:
 
         # n,m     vc size     runtime     approx size     runtime     approx factor
         table_data.append(
-            [f"{(data.num_nodes, data.num_edges)}",
+            [f"{(data.num_nodes,data.num_edges)}",
              len(graph.solution),
              round(graph.duration * 1e-6, 4),
              len(graph.solution_approx),
@@ -62,12 +62,12 @@ def execute_for_res_dir(res_dir: pth.Path) -> None:
              len(data.matching_vertices) / len(graph.solution)]
         )
     
-    table_data = sorted(table_data, key=lambda x: x[0][1])
+    table_data = sorted(table_data, key=lambda x: int(x[0].split(",")[1].rstrip(')')))
 
     with open(res_dir.joinpath("table.csv"), "w") as file:
         writer = csv.writer(file)
         writer.writerows([
-            ["", "Brute Force", "", "LPP Approximation","","","Greedy Approximation"],
+            ["", "LP Optimal (Integer Programming)", "", "LPP Approximation","","","Greedy Approximation"],
             ["(n,m)", "Vertex Cover Size", "Runtime (in Seconds)", "Approximate VC Size", "Runtime (in Seconds)",
              "Approximation Factor", "Greedy Approximation Factor"]
         ])
