@@ -12,13 +12,13 @@ def parse_args() -> cli.Namespace:
     parser.add_argument(
         "--node10",
         type=str,
-        required=True,
+        # required=True,
         help="Resources Directory where all the input files of graph with node 10 are stored")
 
     parser.add_argument(
         "--node20",
         type=str,
-        required=True,
+        # required=True,
         help="Resources Directory where all the input files of graph with node 20 are stored")
 
     return parser.parse_known_args()[0]
@@ -43,29 +43,31 @@ def execute_for_res_dir(res_dir: pth.Path) -> None:
         data = Data(graph_files[i], matching_files[i], vc_files[i])
         graph = Graph(data.edges, data.nodes)
         graph.calculate_approximate()
+        graph.calculate_optimal()
 
         save_path_output = output_dir.joinpath(f"{graph_files[i].stem}.lpp_approx_cover")
         save_path_img = output_dir_img.joinpath(f"{graph_files[i].stem}.png")
 
         graph.store(save_path_output)
-        visualise(save_path_img, data.nodes, data.edges, data.vertex_cover, graph.solution)
+        visualise(save_path_img, data.nodes, data.edges, graph.solution, graph.solution_approx)
 
         # n,m     vc size     runtime     approx size     runtime     approx factor
         table_data.append(
             [f"{(data.num_nodes, data.num_edges)}",
-             data.size_vertex_cover,
-             round(data.runtime_brute_force * 1e-6, 4),
              len(graph.solution),
-             round(graph.duration * 1e-6,4),
-             len(graph.solution) / data.size_vertex_cover]
+             round(graph.duration * 1e-6, 4),
+             len(graph.solution_approx),
+             round(graph.duration_approx * 1e-6,4),
+             len(graph.solution_approx) / len(graph.solution),
+             len(data.matching_vertices) / len(graph.solution)]
         )
 
     with open(res_dir.joinpath("table.csv"), "w") as file:
         writer = csv.writer(file)
         writer.writerows([
-            ["", "Brute Force", "", "LPP Approximation"],
+            ["", "Brute Force", "", "LPP Approximation","","","Greedy Approximation"],
             ["(n,m)", "Vertex Cover Size", "Runtime (in Seconds)", "Approximate VC Size", "Runtime (in Seconds)",
-             "Approximation Factor"]
+             "Approximation Factor", "Greedy Approximation Factor"]
         ])
         writer.writerows(table_data)
 
@@ -86,3 +88,11 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # graph = pth.Path("./resources_nodes10/graphs/graph_20.graph")
+    # maximal_matching = pth.Path("./resources_nodes10/maximal_matching/graph_20.maximal_matching")
+    # vertex = pth.Path("./resources_nodes10/vertex/graph_20.vertex_cover")
+
+    # data = Data(graph, maximal_matching, vertex)
+    # graph = Graph(data.edges, data.nodes)
+    # graph.calculate_optimal()
+    # print(graph.solution)
