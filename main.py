@@ -61,6 +61,8 @@ def execute_for_res_dir(res_dir: pth.Path) -> None:
              len(graph.solution_approx) / len(graph.solution),
              len(data.matching_vertices) / len(graph.solution)]
         )
+    
+    table_data = sorted(table_data, key=lambda x: x[0][1])
 
     with open(res_dir.joinpath("table.csv"), "w") as file:
         writer = csv.writer(file)

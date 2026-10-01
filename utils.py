@@ -29,10 +29,12 @@ def visualise(
     ax[0].set_title("Graph with Optimal Vertex cover")
     netx.draw_networkx_nodes(graph, layout, node_color=optimal_colour, ax=ax[0])
     netx.draw_networkx_edges(graph, layout, edge_color="gray", alpha=0.8, ax=ax[0])
+    netx.draw_networkx_labels(graph, layout, ax=ax[0])
 
     ax[1].set_title("Graph with Approximate Vertex cover")
     netx.draw_networkx_nodes(graph, layout, node_color=approx_colour, ax=ax[1])
     netx.draw_networkx_edges(graph, layout, edge_color="gray", alpha=0.8, ax=ax[1])
+    netx.draw_networkx_labels(graph, layout, ax=ax[1])
 
     fig.legend(
         handles=[optimal_legend_patch, approx_legend_patch]
